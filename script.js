@@ -81,6 +81,16 @@ function setupEventListeners() {
 }
 
 // ============================================================================
+// UTILITY FUNCTIONS
+// ============================================================================
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// ============================================================================
 // AI ANALYSIS ENGINE
 // ============================================================================
 
@@ -451,6 +461,10 @@ function closeTaskModal() {
     state.editingTaskId = null;
 }
 
+function closeAISuggestions() {
+    aiSuggestions.classList.add('hidden');
+}
+
 function saveTask() {
     const title = modalTaskTitle.value.trim();
 
@@ -589,4 +603,17 @@ function completeFromReminder() {
 // ============================================================================
 
 function saveTasksToStorage() {
-    localStorage.setItem('todoTasks', JSON
+    localStorage.setItem('todoTasks', JSON.stringify(state.tasks));
+}
+
+function loadTasksFromStorage() {
+    try {
+        const storedTasks = localStorage.getItem('todoTasks');
+        if (storedTasks) {
+            state.tasks = JSON.parse(storedTasks);
+        }
+    } catch (error) {
+        console.error('Error loading tasks from storage:', error);
+        state.tasks = [];
+    }
+}
