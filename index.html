@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Todo Planner - Smart Task Management</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">🤖</span>
+                    <h1>AI Todo Planner</h1>
+                </div>
+                <div class="header-stats">
+                    <div class="stat">
+                        <span class="stat-label">Total Tasks</span>
+                        <span class="stat-value" id="totalTasks">0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Completed</span>
+                        <span class="stat-value" id="completedTasks">0</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Input Section -->
+            <section class="input-section">
+                <div class="input-container">
+                    <textarea 
+                        id="taskInput" 
+                        placeholder="Describe your task or plan (e.g., 'I need to prepare for my presentation tomorrow and buy groceries')..."
+                        class="task-input"
+                    ></textarea>
+                    <div class="input-actions">
+                        <button id="aiAnalyzeBtn" class="btn btn-primary">
+                            <span class="btn-icon">✨</span> AI Organize
+                        </button>
+                        <button id="addTaskBtn" class="btn btn-secondary">
+                            <span class="btn-icon">➕</span> Add Task
+                        </button>
+                    </div>
+                </div>
+
+                <!-- AI Suggestions -->
+                <div id="aiSuggestions" class="ai-suggestions hidden">
+                    <div class="suggestions-header">
+                        <h3>🎯 AI Suggestions</h3>
+                        <button class="close-btn" onclick="closeAISuggestions()">✕</button>
+                    </div>
+                    <div id="suggestionsContent" class="suggestions-content"></div>
+                    <div class="suggestions-actions">
+                        <button id="applySuggestionsBtn" class="btn btn-primary">Apply All</button>
+                        <button onclick="closeAISuggestions()" class="btn btn-outline">Dismiss</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Filters & Views -->
+            <section class="controls-section">
+                <div class="view-controls">
+                    <button class="view-btn active" data-view="all">All Tasks</button>
+                    <button class="view-btn" data-view="pending">Pending</button>
+                    <button class="view-btn" data-view="completed">Completed</button>
+                    <button class="view-btn" data-view="priority">By Priority</button>
+                </div>
+                <div class="sort-controls">
+                    <select id="sortBy" class="sort-select">
+                        <option value="date">Sort by: Date</option>
+                        <option value="priority">Sort by: Priority</option>
+                        <option value="duedate">Sort by: Due Date</option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- Tasks Grid -->
+            <section class="tasks-section">
+                <div id="tasksList" class="tasks-grid"></div>
+                <div id="emptyState" class="empty-state">
+                    <div class="empty-icon">📝</div>
+                    <p>No tasks yet! Start by adding a task or describing your plans.</p>
+                </div>
+            </section>
+        </main>
+
+        <!-- Notification Area -->
+        <div id="notificationArea" class="notification-area"></div>
+    </div>
+
+    <!-- Modal for Task Details -->
+    <div id="taskModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Task Details</h2>
+                <button class="close-btn" onclick="closeTaskModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="modalTaskTitle">Task Title</label>
+                    <input type="text" id="modalTaskTitle" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label for="modalTaskDesc">Description</label>
+                    <textarea id="modalTaskDesc" class="form-textarea"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="modalTaskPriority">Priority</label>
+                        <select id="modalTaskPriority" class="form-select">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="modalTaskDueDate">Due Date</label>
+                        <input type="datetime-local" id="modalTaskDueDate" class="form-input">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="modalTaskCategory">Category</label>
+                    <select id="modalTaskCategory" class="form-select">
+                        <option value="work">Work</option>
+                        <option value="personal">Personal</option>
+                        <option value="shopping">Shopping</option>
+                        <option value="health">Health</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="modalTaskReminder" class="form-checkbox">
+                        Enable Reminder
+                    </label>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button id="saveTaskBtn" class="btn btn-primary">Save Task</button>
+                <button id="deleteTaskBtn" class="btn btn-danger">Delete Task</button>
+                <button onclick="closeTaskModal()" class="btn btn-outline">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reminder Notification -->
+    <div id="reminderNotification" class="reminder-notification hidden">
+        <div class="reminder-content">
+            <div class="reminder-icon">🔔</div>
+            <div class="reminder-text">
+                <h4 id="reminderTitle">Reminder</h4>
+                <p id="reminderDesc">Task description</p>
+            </div>
+            <div class="reminder-actions">
+                <button onclick="dismissReminder()" class="reminder-btn">Dismiss</button>
+                <button onclick="completeFromReminder()" class="reminder-btn primary">Complete</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+  </html>
