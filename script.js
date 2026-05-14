@@ -589,31 +589,4 @@ function completeFromReminder() {
 // ============================================================================
 
 function saveTasksToStorage() {
-    localStorage.setItem('todoTasks', JSON.stringify(state.tasks));
-}
-
-function loadTasksFromStorage() {
-    const stored = localStorage.getItem('todoTasks');
-    if (stored) {
-        try {
-            state.tasks = JSON.parse(stored);
-        } catch (e) {
-            console.error('Error loading tasks from storage:', e);
-            state.tasks = [];
-        }
-    }
-}
-
-// ============================================================================
-// UTILITY FUNCTIONS
-// ============================================================================
-
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
-function closeAISuggestions() {
-    aiSuggestions.classList.add('hidden');
-}
+    localStorage.setItem('todoTasks', JSON
